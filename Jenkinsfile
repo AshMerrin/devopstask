@@ -16,7 +16,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
        steps {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+        withCredentials([usernamePassword(credentialsId: 'dckr_pat_oJOl7zxHIq7Dx5pQ3F8kmnkDFwk', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
                     sh "docker build -t $DOCKER_IMAGE_NAME:latest -f Dockerfile ."
                     sh "docker push $DOCKER_IMAGE_NAME:latest"
@@ -25,4 +25,3 @@ pipeline {
         }
     }
 }
-	
