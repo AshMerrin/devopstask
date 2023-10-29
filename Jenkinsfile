@@ -15,7 +15,7 @@ pipeline {
         // Build a Docker image for your Node.js application
         script {
           def imageName = "mydockernode:latest"
-          def dockerFile = "/root/Dockerfile" // Path to your Dockerfile
+          def dockerFile = "Dockerfile" // Path to your Dockerfile
  
           sh "docker build -t ${imageName} -f ${dockerFile} ."
         }
