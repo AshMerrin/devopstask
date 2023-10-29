@@ -1,5 +1,10 @@
 pipeline {
   agent any
+  environment {
+        DOCKER_REGISTRY = "docker.io"
+        DOCKER_IMAGE_NAME = "mydockernode"
+    }
+
   stages {
     stage('Build and Test') {
       steps {
@@ -9,35 +14,15 @@ pipeline {
         sh 'npm --version'
       }
     }
- 
-    stage('Build Docker Image') {
-      steps {
-        // Build a Docker image for your Node.js application
-        script {
-          def imageName = "mydockernode:latest"
-          def dockerFile = "Dockerfile" // Path to your Dockerfile
- 
-          sh "docker build -t ${imageName} -f ${dockerFile} ."
+    stage('Build and Push Docker Image') {
+       steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
+                    sh "docker build -t $DOCKER_IMAGE_NAME:latest -f Dockerfile ."
+                    sh "docker push $DOCKER_IMAGE_NAME:latest"
+                }
+            }
         }
-      }
     }
- 
-    stage('Push Docker Image') {
-      steps {
-        // Push the Docker image to a Docker registry (e.g., Docker Hub)
-        script {
-          def imageName = "mydockernode:latest"
-          def registryURL = "docker.io/ashmerrin" // Replace with your Docker Hub username
-         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable:
-'DOCKER_USERNAME', passwordVariable:
-'DOCKER_PASSWORD')]) {
-            sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ${registryURL}"
-          }
-          sh "docker tag ${imageName} ${registryURL}/${imageName}"
-          sh "docker push ${registryURL}/${imageName}"
-        }
-      }
-    }
- 
-  }
 }
+	
