@@ -1,5 +1,5 @@
 FROM node:18
-WORKDIR /root/nodeapp
+WORKDIR nodeapp
 COPY package*.json ./
 RUN npm install
 COPY app.js ./
