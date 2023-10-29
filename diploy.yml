@@ -1,0 +1,74 @@
+---
+- name: Deploy Node.js Application with Docker
+  hosts: target_server
+  become: yes
+  tasks:
+    - name: Update package cache and install dependencies
+      apt:
+        update_cache: yes
+        pkg:
+          - python3-pip
+          - python3-distutils
+          - build-essential
+
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /tmp/docker.gpg
+        validate_certs: yes
+      register: download_result
+      changed_when: download_result.changed
+
+    - name: Import Docker GPG key to /etc/apt/keyrings/docker.gpg
+      ansible.builtin.command:
+        cmd: "gpg --dearmor -o /etc/apt/keyrings/docker.gpg < /tmp/docker.gpg"
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Add Docker repository entry
+      become: yes
+      shell: |
+        echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo $VERSION_CODENAME)" stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        enabled: yes
+        state: started
+    
+    - name: Pull Docker image from registry
+      docker_image:
+        name: ashmerrin/mydockernode:latest
+        source: pull
+
+    - name: Stop and remove existing container (if running)
+      docker_container:
+        name: node_app_container
+        state: absent
+      ignore_errors: yes
+
+    - name: Allow incoming traffic on port 3000
+      become: yes
+      ansible.builtin.ufw:
+        rule: allow
+        port: 3000
+        proto: tcp
+
+    - name: Run Docker container
+      docker_container:
+        name: node_app_container
+        image: ashmerrin/mydockernode:latest
+        ports:
+          - "3000:3000"
+
+    - name: Prune old Docker images
+      command: docker image prune -af

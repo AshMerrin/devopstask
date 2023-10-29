@@ -1,0 +1,83 @@
+---
+- name: Deploy Node.js Application
+  hosts: target_server
+  become: yes
+  tasks:
+    - name: Update package cache and install dependencies
+      apt:
+        update_cache: yes
+        pkg: ['python3-pip', 'python3-distutils', 'build-essential']
+    
+     # - name: Remove conflicting Docker packages
+     # apt:
+     #   name: "{{ item }}"
+     #   state: absent
+     # with_items:
+     #  - containerd.io
+          # - docker.io
+    
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg 
+        dest: /tmp/docker.gpg
+
+    - name: Install gnupg
+      ansible.builtin.package:
+        name: gnupg
+        state: present
+
+    - name: Import Docker GPG key
+      ansible.builtin.shell: gpg --dearmor -o /etc/apt/keyrings/docker.gpg < /tmp/docker.gpg
+
+    - name: Add Docker repository entry
+      ansible.builtin.shell: |
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      changed_when: false
+
+    - name: Install Docker
+      apt:
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Pull Docker image from registry
+      docker_image:
+        name: mydockernode:latest
+        source: pull
+
+    - name: Stop and remove existing container (if running)
+      docker_container:
+        name: node_app_container
+        state: absent
+      ignore_errors: yes
+    
+    - name: Allow incoming traffic on port 3000
+      become: yes
+      ansible.builtin.ufw:
+        rule: allow
+        port: 3000
+        proto: tcp
+
+          #- name: Modify Node.js application to listen on 0.0.0.0
+          # lineinfile:
+          #path: app.js  # Path to your Node.js application file
+          #regexp: '^app\.listen'
+          #line: 'app.listen(3000, "0.0.0.0", () => {'
+
+    - name: Run Docker container
+      docker_container:
+        name: node_app_container
+        image: mydockernode:latest
+        ports:
+          - "3000:3000"
