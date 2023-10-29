@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from your version control system (e.g., Git)
-                git 'https://github.com/AshMerrin/devopstask.git'
+                git branch: 'main', credentialsId: 'GithubToken', url:'https://github.com/AshMerrin/devopstask.git'
             }
         }
 
