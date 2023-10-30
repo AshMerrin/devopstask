@@ -14,8 +14,9 @@ pipeline {
       steps {
         // Build a Docker image for your Node.js application
         script {
+          git branch: 'main', credentialsId: 'GithubToken', url: 'https://github.com/AshMerrin/dockertask.git'
           def imageName = "mydockernode:latest"
-          def dockerFile = "Dockerfile" // Path to your Dockerfile
+          def dockerFile = "/root/dockertask/Dockerfile" // Path to your Dockerfile
  
           sh "docker build -t ${imageName} -f ${dockerFile} ."
         }
