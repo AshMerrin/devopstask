@@ -12,7 +12,7 @@ pipeline {
         stage('Clone Dockerfile Repository') {
             steps {
                 script {
-                    dir('/root/dockertask/Dockerfile') {
+                   // dir('/root/dockertask/Dockerfile') {
                     // Clone the repository containing the Dockerfile
                         git branch: 'main', credentialsId: 'GithubToken', url: 'https://github.com/AshMerrin/dockertask.git'
                     }
