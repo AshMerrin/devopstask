@@ -12,21 +12,11 @@ pipeline {
         stage('Clone Dockerfile Repository') {
             steps {
                 script {
-                   // dir('/root/dockertask/Dockerfile') {
                     // Clone the repository containing the Dockerfile
-                        git branch: 'main', credentialsId: 'GithubToken', url: 'https://github.com/AshMerrin/dockertask.git'
-                    }
+                    git branch: 'main', credentialsId: 'GithubToken', url: 'https://github.com/AshMerrin/dockertask.git'
                 }
             }
         }
-        /* stage('Build and Test') {
-         #   steps {
-          #      // Install dependencies and run tests
-           #     sh 'npm install'
-            #    sh 'node --version'
-                sh 'npm --version'
-            }
-        } */
         stage('Build Docker Image') {
             steps {
                 // Build a Docker image for your Node.js application
@@ -53,3 +43,4 @@ pipeline {
             }
         }
     }
+}
