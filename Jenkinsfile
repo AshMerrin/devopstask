@@ -1,4 +1,4 @@
-pipeline {
+#pipeline {
     agent any
     stages {
         stage('Clone Devopsfile Repository') {
@@ -17,14 +17,14 @@ pipeline {
                 }
             }
         }
-        stage('Build and Test') {
-            steps {
-                // Install dependencies and run tests
-                sh 'npm install'
-                sh 'node --version'
+        /* stage('Build and Test') {
+         #   steps {
+          #      // Install dependencies and run tests
+           #     sh 'npm install'
+            #    sh 'node --version'
                 sh 'npm --version'
             }
-        }
+        } */
         stage('Build Docker Image') {
             steps {
                 // Build a Docker image for your Node.js application
