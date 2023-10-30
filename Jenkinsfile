@@ -11,6 +11,18 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
+                // Build a Docker image for your Node.js application
+                script {
+                      git branch: 'main', credentialsId: 'GithubToken', url: 'https://github.com/AshMerrin/dockertask.git'
+                          def imageName = "mydockernode:latest"
+                          def dockerFile = "/root/dockertask/Dockerfile" // Path to your Dockerfile
+ 
+                    sh "docker build -t ${imageName} -f ${dockerFile} ."
+                }    
+              }
+            }
+        /*stage('Build Docker Image') {
+            steps {
                 script {
                     def imageName = "mydockernode:latest"
                     def dockerFilePath = "/root/dockertask/Dockerfile" // Path to Dockerfile in the cloned repository
@@ -18,7 +30,7 @@ pipeline {
                     sh "docker build -t ${imageName} -f ${dockerFilePath} ./devopstask"
                 }
             }
-        }
+        }*/
         stage('Push Docker Image') {
             steps {
                 // Push the Docker image to a Docker registry (e.g., Docker Hub)
