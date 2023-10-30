@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "mydockernode:latest"
-                    def dockerFilePath = "./devopstask/Dockerfile" // Path to Dockerfile in the cloned repository
+                    def dockerFilePath = "/root/dockertask/Dockerfile" // Path to Dockerfile in the cloned repository
 
                     sh "docker build -t ${imageName} -f ${dockerFilePath} ./devopstask"
                 }
