@@ -1,17 +1,6 @@
 pipeline {
     agent any
-    post {
-        // Clean after build
-        always {
-            cleanWs(cleanWhenNotBuilt: false,
-                    deleteDirs: true,
-                    disableDeferredWipeout: true,
-                    notFailBuild: true,
-                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-                               [pattern: '.propsfile', type: 'EXCLUDE']])
-        }
-    }
-    stages {
+       stages {
        stage('Build Docker Image') {
             steps {
                 // Build a Docker image for your Node.js application
