@@ -15,7 +15,7 @@ pipeline {
                 script {
                       git branch: 'main', credentialsId: 'GithubToken', url: 'https://github.com/AshMerrin/dockertask.git'
                           def imageName = "mydockernode:latest"
-                          def dockerFile = "/root/dockertask/Dockerfile" // Path to your Dockerfile
+                          def dockerFile = "/home/DevTask3/dockertask/Dockerfile" // Path to your Dockerfile
  
                     sh "docker build -t ${imageName} -f ${dockerFile} ."
                 }    
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "mydockernode:latest"
-                    def dockerFilePath = "/root/dockertask/Dockerfile" // Path to Dockerfile in the cloned repository
+                    def dockerFilePath = "/home/DevTask3/dockertask/Dockerfile" // Path to Dockerfile in the cloned repository
 
                     sh "docker build -t ${imageName} -f ${dockerFilePath} ./devopstask"
                 }
