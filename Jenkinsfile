@@ -11,7 +11,7 @@ pipeline {
                                [pattern: '.propsfile', type: 'EXCLUDE']])
         }
     }
-      stages {
+    stages {
         stage('Clone Devopsfile Repository') {
             steps {
                 script {
