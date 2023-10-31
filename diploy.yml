@@ -68,7 +68,7 @@
         name: node_app_container
         image: ashmerrin/mydockernode:latest
         ports:
-          - "3000:3000"
+          - "4000:3000"
 
     - name: Prune old Docker images
       command: docker image prune -af
